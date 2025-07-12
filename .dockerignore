@@ -1,0 +1,56 @@
+# Build artifacts
+target/
+debug/
+release/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+CODE_OF_CONDUCT.md
+SECURITY.md
+LICENSE
+*.md
+
+# CI/CD
+.github/
+renovate.json
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+compose.yaml
+
+# Environment files (except example)
+.env
+.env.local
+.env.production
+.env.staging
+
+# Logs
+*.log
+logs/
+
+# Test files
+tests/
+test/
+__tests__/
+
+# Rust specific
+**/*.rs.bk
+.cargo/
+Cargo.lock.bak
