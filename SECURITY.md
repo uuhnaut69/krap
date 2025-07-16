@@ -2,28 +2,33 @@
 
 ## Supported Versions
 
-This project is currently in early development. Security updates are provided for the following versions:
+This project is currently in early development. Security updates are provided for the following
+versions:
 
 | Version | Supported          |
-| ------- | ------------------ |
+|---------|--------------------|
 | 0.1.x   | :white_check_mark: |
 | < 0.1   | :x:                |
 
-**Note**: As this project is in early development (pre-1.0), breaking changes may occur between versions. We recommend staying updated with the latest release.
+**Note**: As this project is in early development (pre-1.0), breaking changes may occur between
+versions. We recommend staying updated with the latest release.
 
 ## Reporting a Vulnerability
 
-We take security vulnerabilities seriously. If you discover a security vulnerability in this project, please report it responsibly:
+We take security vulnerabilities seriously. If you discover a security vulnerability in this
+project, please report it responsibly:
 
 ### How to Report
 
-1. **Email**: Send details to the project maintainer(s) via private email (check the repository for contact information)
+1. **Email**: Send details to the project maintainer(s) via private email (check the repository for
+   contact information)
 2. **GitHub Security Advisory**: Use GitHub's private vulnerability reporting feature if available
 3. **Issues**: For non-sensitive security concerns, you may open a public issue
 
 ### What to Include
 
 Please include the following information in your report:
+
 - Description of the vulnerability
 - Steps to reproduce the issue
 - Potential impact assessment
@@ -38,13 +43,16 @@ Please include the following information in your report:
 
 ### Disclosure Policy
 
-- We request that you do not publicly disclose the vulnerability until we have had a chance to address it
+- We request that you do not publicly disclose the vulnerability until we have had a chance to
+  address it
 - Once a fix is released, we will work with you on coordinated disclosure
-- We appreciate your responsible disclosure and will acknowledge your contribution (unless you prefer to remain anonymous)
+- We appreciate your responsible disclosure and will acknowledge your contribution (unless you
+  prefer to remain anonymous)
 
 ## Security Best Practices
 
 When using this API:
+
 - Always use HTTPS in production
 - Implement proper authentication and authorization
 - Validate all inputs

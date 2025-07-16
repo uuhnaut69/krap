@@ -13,6 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-pub mod common;
-pub mod health;
-pub mod user;
+
+pub type DateTimeUtc = chrono::DateTime<chrono::FixedOffset>;
+
+#[derive(thiserror::Error, Debug)]
+pub enum DomainError {
+    #[error("internal_error")]
+    InternalError,
+    #[error("{0}")]
+    ConflictError(String),
+    #[error("not_found_error")]
+    NotFoundError,
+    // User
+    #[error("password_not_match_error")]
+    PasswordNotMatchError,
+    #[error("authentication_failed")]
+    AuthenticationFailed,
+    #[error("invalid_credentials")]
+    InvalidCredentials,
+}

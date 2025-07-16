@@ -13,4 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+pub mod auth_handler;
+pub mod common;
+pub mod error_handler;
 pub mod health_handler;

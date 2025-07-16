@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 use dotenvy::dotenv;
-use rustapi::infrastructure::observability::init_observability;
 use rustapi::infrastructure::server::initialize_server;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     dotenv().ok();
-    init_observability();
-    initialize_server().await;
-
+    initialize_server().await?;
     Ok(())
 }

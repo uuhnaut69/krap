@@ -13,6 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-pub mod common;
-pub mod health;
-pub mod user;
+
+use sea_orm_migration::prelude::*;
+
+#[async_std::main]
+async fn main() {
+    cli::run_cli(migration::Migrator).await;
+}

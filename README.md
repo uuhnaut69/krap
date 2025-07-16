@@ -1,6 +1,7 @@
 # RustAPI
 
-A modern, high-performance REST API template built with Rust using Axum framework and clean architecture principles.
+A modern, high-performance REST API template built with Rust using Axum framework and clean
+architecture principles.
 
 ## 🚀 Features
 
@@ -89,10 +90,10 @@ docker-compose down -v
 
 ## ⚙️ Configuration
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PORT` | Server port | `3000` |
-| `RUST_LOG` | Logging level | `info` |
+| Variable   | Description   | Default |
+|------------|---------------|---------|
+| `PORT`     | Server port   | `3000`  |
+| `RUST_LOG` | Logging level | `info`  |
 
 ## 🎯 Next Steps
 

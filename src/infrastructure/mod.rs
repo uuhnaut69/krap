@@ -16,6 +16,6 @@
 pub mod app_state;
 pub mod application_health;
 pub mod http;
-pub mod observability;
 pub mod openapi;
+pub mod persistence;
 pub mod server;

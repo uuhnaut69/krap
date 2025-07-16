@@ -2,6 +2,10 @@
 name = "rustapi"
 version = "0.1.0"
 edition = "2024"
+description = "A Rust API Server"
+
+[workspace]
+members = [".", "migration"]
 
 [dependencies]
 anyhow = { version = "1.0.98" }
@@ -12,7 +16,6 @@ tower = { version = "0.5.2" }
 tower-http = { version = "0.6.6", features = ["cors", "compression-full", "decompression-full", "trace", "timeout"] }
 dotenvy = { version = "0.15.7" }
 serde = { version = "1.0.219", features = ["derive"] }
-serde_json = { version = "1.0.140" }
 tracing = { version = "0.1.41" }
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 thiserror = { version = "2.0.12" }
@@ -20,3 +23,11 @@ utoipa = { version = "5.4.0", features = ["axum_extras"] }
 utoipa-axum = { version = "0.2.0" }
 utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
 utoipa-scalar = { version = "0.3.0", features = ["axum"] }
+sea-orm = { version = "2.0.0-rc.1", features = ["runtime-tokio-native-tls", "sqlx-postgres", "with-chrono", "debug-print"] }
+chrono = { version = "0.4.41", features = ["serde"] }
+uuid = { version = "1.17.0", features = ["v7"] }
+validator = { version = "0.20.0", features = ["derive"] }
+bcrypt = { version = "0.17.0" }
+tower-sessions = { version = "0.14.0" }
+tower-sessions-redis-store = { version = "0.16.0" }
+time = { version = "0.3.41" }

@@ -39,7 +39,7 @@ impl Modify for SecurityAddon {
     fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
         let components = openapi.components.get_or_insert_default();
         let description = "The session cookie is used by the web UI to authenticate users.";
-        let cookie = ApiKey::Cookie(ApiKeyValue::with_description("X-SESSION-ID", description));
+        let cookie = ApiKey::Cookie(ApiKeyValue::with_description("id", description));
         components.add_security_scheme("cookie", SecurityScheme::ApiKey(cookie));
     }
 }

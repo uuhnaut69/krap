@@ -13,6 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-pub mod common;
-pub mod health;
-pub mod user;
+use sea_orm::ConnectOptions;
+
+pub async fn establish_connection() -> anyhow::Result<sea_orm::DatabaseConnection> {
+    let database_url = std::env::var("DATABASE_URL")
+        .map_err(|_| anyhow::anyhow!("DATABASE_URL environment variable must be set"))?;
+    let mut opt = ConnectOptions::new(&database_url);
+    opt.max_connections(20);
+    opt.min_connections(5);
+    opt.sqlx_logging(true);
+    sea_orm::Database::connect(opt)
+        .await
+        .map_err(|e| anyhow::anyhow!("Failed to connect to the database: {}", e))
+}

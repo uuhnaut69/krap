@@ -15,24 +15,26 @@
  */
 use crate::application::health::spi::health_repository::HealthRepository;
 use crate::domain::health::Health;
+use std::sync::Arc;
 
-pub struct ApplicationHealth {}
-
-impl ApplicationHealth {
-    pub fn new() -> ApplicationHealth {
-        ApplicationHealth {}
-    }
+#[async_trait::async_trait]
+pub trait HealthService: Send + Sync + 'static {
+    async fn health_check(&self) -> Health;
 }
 
-impl Default for ApplicationHealth {
-    fn default() -> Self {
-        ApplicationHealth::new()
+pub struct HealthServiceImpl {
+    pub health_repository: Arc<dyn HealthRepository>,
+}
+
+impl HealthServiceImpl {
+    pub fn new(health_repository: Arc<dyn HealthRepository>) -> Self {
+        HealthServiceImpl { health_repository }
     }
 }
 
 #[async_trait::async_trait]
-impl HealthRepository for ApplicationHealth {
+impl HealthService for HealthServiceImpl {
     async fn health_check(&self) -> Health {
-        Health { healthy: true }
+        self.health_repository.health_check().await
     }
 }

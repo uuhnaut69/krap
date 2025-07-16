@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-pub mod common;
-pub mod health;
-pub mod user;
+use crate::domain::health::Health;
+
+#[async_trait::async_trait]
+pub trait HealthRepository: Send + Sync + 'static {
+    async fn health_check(&self) -> Health;
+}

@@ -17,13 +17,13 @@ use crate::infrastructure::app_state::AppState;
 use axum::extract::State;
 use axum::response::IntoResponse;
 use axum::Json;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use std::sync::Arc;
 use utoipa::ToSchema;
 
 const HEALTH_TAG: &str = "Health";
 
-#[derive(Serialize, Deserialize, Debug, ToSchema)]
+#[derive(Serialize, Debug, ToSchema)]
 pub struct HealthResponse {
     healthy: bool,
 }
@@ -32,6 +32,7 @@ pub struct HealthResponse {
     tag = HEALTH_TAG,
     get,
     path = "/health",
+    description = "Perform a health check to verify the application and its dependencies are running correctly. Returns the overall health status of the service.",
     responses(
         (status = 200, description = "Health check successful", body = HealthResponse)
     )
