@@ -22,6 +22,12 @@ use std::sync::Arc;
 pub trait AuthService: Send + Sync + 'static {
     async fn register(&self, email: &str, password: &str) -> Result<User, DomainError>;
     async fn login(&self, email: &str, password: &str) -> Result<User, DomainError>;
+    async fn change_password(
+        &self,
+        user_id: &str,
+        current_password: &str,
+        new_password: &str,
+    ) -> Result<User, DomainError>;
 }
 
 pub struct DefaultAuthService {
@@ -40,5 +46,16 @@ impl AuthService for DefaultAuthService {
         let user = self.user_service.find_by_email(&email).await?;
         user.is_password_match(&password)?;
         Ok(user)
+    }
+
+    async fn change_password(
+        &self,
+        user_id: &str,
+        current_password: &str,
+        new_password: &str,
+    ) -> Result<User, DomainError> {
+        self.user_service
+            .change_password(user_id, current_password, new_password)
+            .await
     }
 }

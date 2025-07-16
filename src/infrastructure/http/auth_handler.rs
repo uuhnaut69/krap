@@ -170,3 +170,40 @@ pub async fn profile(
         email: current_user.email,
     }))
 }
+
+#[derive(Deserialize, Debug, ToSchema, validator::Validate)]
+pub struct ChangePasswordRequest {
+    #[validate(length(min = 1, message = "current_password_required"))]
+    pub current_password: String,
+    #[validate(length(min = 8, message = "new_password_must_be_at_least_8_characters"))]
+    pub new_password: String,
+}
+
+#[utoipa::path(
+    tag = AUTH_TAG,
+    put,
+    path = "/auth/change-password",
+    description = "Change the current authenticated user's password. Requires the current password for verification and a new password that meets security requirements.",
+    request_body = ChangePasswordRequest,
+    responses(
+        (status = 200, description = "Password changed successfully", body = AuthResponse),
+        (status = 400, description = "Validation error or new password same as current", body = ApiError),
+        (status = 401, description = "Invalid current password or unauthorized", body = ApiError),
+        (status = 500, description = "Internal server error", body = ApiError)
+    )
+)]
+pub async fn change_password(
+    State(app_state): State<Arc<AppState>>,
+    AuthenticatedUser(current_user): AuthenticatedUser,
+    ValidatedJson(request): ValidatedJson<ChangePasswordRequest>,
+) -> ApiResult<AuthResponse> {
+    let user = app_state
+        .auth_service
+        .change_password(&current_user.id, &request.current_password, &request.new_password)
+        .await?;
+
+    Ok(Json(AuthResponse {
+        id: user.id.to_string(),
+        email: user.email,
+    }))
+}

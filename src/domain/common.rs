@@ -27,6 +27,8 @@ pub enum DomainError {
     // User
     #[error("password_not_match_error")]
     PasswordNotMatchError,
+    #[error("same_password_error")]
+    SamePasswordError,
     #[error("authentication_failed")]
     AuthenticationFailed,
     #[error("invalid_credentials")]

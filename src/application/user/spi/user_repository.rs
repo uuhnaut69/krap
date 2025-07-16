@@ -20,5 +20,9 @@ use crate::domain::user::User;
 pub trait UserRepository: Send + Sync + 'static {
     async fn find_by_email(&self, email: &str) -> anyhow::Result<Option<User>>;
 
+    async fn find_by_id(&self, id: &str) -> anyhow::Result<Option<User>>;
+
     async fn save(&self, user: User) -> anyhow::Result<User>;
+
+    async fn update(&self, user: User) -> anyhow::Result<User>;
 }

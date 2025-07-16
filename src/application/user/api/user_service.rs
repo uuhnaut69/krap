@@ -27,6 +27,13 @@ pub trait UserService: Send + Sync + 'static {
     ) -> Result<User, DomainError>;
 
     async fn find_by_email(&self, email: &str) -> Result<User, DomainError>;
+
+    async fn change_password(
+        &self,
+        user_id: &str,
+        current_password: &str,
+        new_password: &str,
+    ) -> Result<User, DomainError>;
 }
 
 pub struct DefaultUserService {
@@ -72,5 +79,32 @@ impl UserService for DefaultUserService {
                 Err(DomainError::InternalError)
             }
         }
+    }
+
+    async fn change_password(
+        &self,
+        user_id: &str,
+        current_password: &str,
+        new_password: &str,
+    ) -> Result<User, DomainError> {
+        let mut user = match self.user_repository.find_by_id(user_id).await {
+            Ok(Some(user)) => user,
+            Ok(None) => return Err(DomainError::NotFoundError),
+            Err(e) => {
+                tracing::error!("Error finding user by id: {:?}", e);
+                return Err(DomainError::InternalError);
+            }
+        };
+
+        user.is_password_match(current_password)?;
+        user.change_password(new_password)?;
+
+        let updated_user = self
+            .user_repository
+            .update(user)
+            .await
+            .map_err(|_| DomainError::InternalError)?;
+
+        Ok(updated_user)
     }
 }

@@ -17,10 +17,22 @@ use crate::application::user::spi::user_repository::UserRepository;
 use crate::domain::user::User;
 use crate::infrastructure::persistence::seaorm::entity::users;
 use sea_orm::ColumnTrait;
-use sea_orm::{DatabaseConnection, EntityTrait, QueryFilter, Set};
+use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 
 pub struct SeaOrmUserRepository {
     pub db: DatabaseConnection,
+}
+
+impl SeaOrmUserRepository {
+    fn model_to_user(model: users::Model) -> User {
+        User {
+            id: model.id,
+            email: model.email,
+            password: model.password,
+            created_at: model.created_at,
+            updated_at: model.updated_at,
+        }
+    }
 }
 
 #[async_trait::async_trait]
@@ -30,13 +42,16 @@ impl UserRepository for SeaOrmUserRepository {
             .filter(users::Column::Email.eq(email))
             .one(&self.db)
             .await?
-            .map(|user| User {
-                id: user.id,
-                email: user.email,
-                password: user.password,
-                created_at: user.created_at,
-                updated_at: user.updated_at,
-            });
+            .map(Self::model_to_user);
+        Ok(found_user)
+    }
+
+    async fn find_by_id(&self, id: &str) -> anyhow::Result<Option<User>> {
+        let found_user = users::Entity::find()
+            .filter(users::Column::Id.eq(id))
+            .one(&self.db)
+            .await?
+            .map(Self::model_to_user);
         Ok(found_user)
     }
 
@@ -53,12 +68,20 @@ impl UserRepository for SeaOrmUserRepository {
             .exec_with_returning(&self.db)
             .await?;
 
-        Ok(User {
-            id: saved_user.id,
-            email: saved_user.email,
-            password: saved_user.password,
-            created_at: saved_user.created_at,
-            updated_at: saved_user.updated_at,
-        })
+        Ok(Self::model_to_user(saved_user))
+    }
+
+    async fn update(&self, user: User) -> anyhow::Result<User> {
+        let model = users::ActiveModel {
+            id: Set(user.id.clone()),
+            email: Set(user.email),
+            password: Set(user.password),
+            created_at: Set(user.created_at),
+            updated_at: Set(user.updated_at),
+        };
+
+        let updated_user = model.update(&self.db).await?;
+
+        Ok(Self::model_to_user(updated_user))
     }
 }

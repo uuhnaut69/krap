@@ -49,6 +49,17 @@ impl User {
             Err(_) => Err(DomainError::InternalError),
         }
     }
+
+    pub fn change_password(&mut self, new_password: &str) -> Result<(), DomainError> {
+        if self.is_password_match(new_password).is_ok() {
+            return Err(DomainError::SamePasswordError);
+        }
+
+        let hashed_password = Self::hash_password(new_password)?;
+        self.password = hashed_password;
+        self.updated_at = DateTimeUtc::from(chrono::Utc::now());
+        Ok(())
+    }
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]

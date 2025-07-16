@@ -103,6 +103,10 @@ impl From<DomainError> for ApiError {
                 tracing::warn!("Authentication error: {}", error);
                 ApiError::new(error.to_string(), ErrorCategory::Unauthorized)
             }
+            DomainError::SamePasswordError => {
+                tracing::warn!("Same password validation error: {}", error);
+                ApiError::new(error.to_string(), ErrorCategory::BadRequest)
+            }
         }
     }
 }
