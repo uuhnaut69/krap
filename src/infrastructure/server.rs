@@ -16,7 +16,6 @@
 use crate::infrastructure::app_state::AppState;
 use crate::infrastructure::http::*;
 use crate::infrastructure::openapi::BaseOpenApi;
-use axum::http::Method;
 use axum::Router;
 use std::env;
 use std::net::Ipv4Addr;
@@ -76,7 +75,7 @@ fn setup_router(
                 .layer(RequestDecompressionLayer::new())
                 .layer(CompressionLayer::new().quality(CompressionLevel::Fastest)),
         )
-        .layer(setup_cors_middleware())
+        .layer(CorsLayer::permissive())
         .layer((
             TraceLayer::new_for_http(),
             TimeoutLayer::new(Duration::from_secs(10)),
@@ -98,18 +97,6 @@ fn setup_documentation(api: OpenApi) -> Router<Arc<AppState>> {
     Router::new()
         .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", api.clone()))
         .merge(Scalar::with_url("/scalar", api))
-}
-
-fn setup_cors_middleware() -> CorsLayer {
-    CorsLayer::new()
-        .allow_origin(tower_http::cors::Any)
-        .allow_methods([
-            Method::GET,
-            Method::POST,
-            Method::PUT,
-            Method::DELETE,
-            Method::OPTIONS,
-        ])
 }
 
 async fn start_server(router: Router, port: u16) -> anyhow::Result<()> {
