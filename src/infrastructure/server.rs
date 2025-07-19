@@ -63,7 +63,7 @@ fn get_server_port() -> anyhow::Result<u16> {
 fn setup_router(
     app_state: Arc<AppState>,
     session_layer: SessionManagerLayer<RedisStore<Pool>>,
-) -> axum::Router {
+) -> Router {
     let (router, api) = setup_routes_and_openapi();
     let documentation_router = setup_documentation(api);
 
@@ -95,7 +95,7 @@ fn setup_routes_and_openapi() -> (Router<Arc<AppState>>, OpenApi) {
 }
 
 fn setup_documentation(api: OpenApi) -> Router<Arc<AppState>> {
-    axum::Router::new()
+    Router::new()
         .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", api.clone()))
         .merge(Scalar::with_url("/scalar", api))
 }

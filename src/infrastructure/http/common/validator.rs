@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-use crate::infrastructure::http::error_handler::{ApiError, ErrorCategory};
+use crate::infrastructure::http::error_handler::{ApiError, ErrorKind};
+use axum::Json;
 use axum::body::Body;
 use axum::extract::rejection::JsonRejection;
 use axum::extract::{FromRequest, Request};
-use axum::Json;
 use serde::de::DeserializeOwned;
 use std::future::Future;
 use validator::Validate;
@@ -31,20 +31,20 @@ impl<T, S> FromRequest<S> for ValidatedJson<T>
 where
     T: DeserializeOwned + Validate,
     S: Send + Sync,
-    Json<T>: FromRequest<S, Rejection=JsonRejection>,
+    Json<T>: FromRequest<S, Rejection = JsonRejection>,
 {
     type Rejection = ApiError;
 
     fn from_request(
         req: Request<Body>,
         state: &S,
-    ) -> impl Future<Output=Result<Self, Self::Rejection>> + Send {
+    ) -> impl Future<Output = Result<Self, Self::Rejection>> + Send {
         async move {
             let Json(value) = Json::<T>::from_request(req, state)
                 .await
                 .map_err(|rejection| {
                     tracing::debug!("JSON parsing error: {:?}", rejection);
-                    ApiError::new("invalid_json_format".to_string(), ErrorCategory::BadRequest)
+                    ApiError::new("invalid_json_format".to_string(), ErrorKind::BadRequest)
                 })?;
 
             value

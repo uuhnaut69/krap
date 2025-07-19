@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 use crate::domain::user::UserProfile;
-use crate::infrastructure::http::error_handler::{ApiError, ErrorCategory};
+use crate::infrastructure::http::error_handler::{ApiError, ErrorKind};
 use axum::extract::FromRequestParts;
 use axum::http::request::Parts;
 use axum::RequestPartsExt;
@@ -39,7 +39,7 @@ where
             let session = parts.extract::<Session>().await.map_err(|_| {
                 ApiError::new(
                     "internal_server_error".to_string(),
-                    ErrorCategory::InternalServerError,
+                    ErrorKind::InternalServerError,
                 )
             })?;
 
@@ -49,13 +49,13 @@ where
                 .map_err(|_| {
                     ApiError::new(
                         "internal_server_error".to_string(),
-                        ErrorCategory::InternalServerError,
+                        ErrorKind::InternalServerError,
                     )
                 })?
                 .ok_or_else(|| {
                     ApiError::new(
                         "unauthenticated_error".to_string(),
-                        ErrorCategory::Unauthorized,
+                        ErrorKind::Unauthorized,
                     )
                 })?;
 

@@ -17,7 +17,7 @@ use crate::domain::user::UserProfile;
 use crate::infrastructure::app_state::AppState;
 use crate::infrastructure::http::common::auth::{AuthenticatedUser, SESSION_USER_KEY};
 use crate::infrastructure::http::common::validator::ValidatedJson;
-use crate::infrastructure::http::error_handler::{ApiError, ApiResult, ErrorCategory};
+use crate::infrastructure::http::error_handler::{ApiError, ApiResult, ErrorKind};
 use axum::extract::State;
 use axum::Json;
 use serde::{Deserialize, Serialize};
@@ -72,7 +72,7 @@ pub async fn register(
         .map_err(|_| {
             ApiError::new(
                 "failed_to_create_session_error".to_string(),
-                ErrorCategory::InternalServerError,
+                ErrorKind::InternalServerError,
             )
         })?;
 
@@ -120,7 +120,7 @@ pub async fn login(
         .map_err(|_| {
             ApiError::new(
                 "failed_to_create_session_error".to_string(),
-                ErrorCategory::InternalServerError,
+                ErrorKind::InternalServerError,
             )
         })?;
 
@@ -144,7 +144,7 @@ pub async fn logout(session: Session) -> ApiResult<()> {
     session.flush().await.map_err(|_| {
         ApiError::new(
             "failed_to_logout_error".to_string(),
-            ErrorCategory::InternalServerError,
+            ErrorKind::InternalServerError,
         )
     })?;
 

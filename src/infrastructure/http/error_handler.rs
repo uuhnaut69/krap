@@ -27,7 +27,7 @@ pub type ApiResult<T> = Result<Json<T>, ApiError>;
 pub type ErrorDetail = HashMap<String, String>;
 
 #[derive(Debug)]
-pub enum ErrorCategory {
+pub enum ErrorKind {
     BadRequest,
     Unauthorized,
     NotFound,
@@ -35,7 +35,7 @@ pub enum ErrorCategory {
     InternalServerError,
 }
 
-impl ErrorCategory {
+impl ErrorKind {
     fn status_code(&self) -> StatusCode {
         match self {
             Self::BadRequest => StatusCode::BAD_REQUEST,
@@ -53,30 +53,30 @@ pub struct ApiError {
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub details: Vec<ErrorDetail>,
     #[serde(skip)]
-    pub category: ErrorCategory,
+    pub kind: ErrorKind,
 }
 
 impl ApiError {
-    pub fn new(message: String, category: ErrorCategory) -> Self {
+    pub fn new(message: String, kind: ErrorKind) -> Self {
         Self {
             message,
             details: vec![],
-            category,
+            kind,
         }
     }
 
-    fn with_details(message: String, details: Vec<ErrorDetail>, category: ErrorCategory) -> Self {
+    fn with_details(message: String, details: Vec<ErrorDetail>, kind: ErrorKind) -> Self {
         Self {
             message,
             details,
-            category,
+            kind,
         }
     }
 }
 
 impl IntoResponse for ApiError {
     fn into_response(self) -> axum::response::Response {
-        (self.category.status_code(), Json(self)).into_response()
+        (self.kind.status_code(), Json(self)).into_response()
     }
 }
 
@@ -87,25 +87,25 @@ impl From<DomainError> for ApiError {
                 tracing::error!("Internal server error occurred");
                 ApiError::new(
                     "internal_error".to_string(),
-                    ErrorCategory::InternalServerError,
+                    ErrorKind::InternalServerError,
                 )
             }
             DomainError::ConflictError(message) => {
                 tracing::warn!("Conflict error: {}", message);
-                ApiError::new(message, ErrorCategory::Conflict)
+                ApiError::new(message, ErrorKind::Conflict)
             }
             DomainError::NotFoundError => {
-                ApiError::new("not_found_error".to_string(), ErrorCategory::NotFound)
+                ApiError::new("not_found_error".to_string(), ErrorKind::NotFound)
             }
             DomainError::PasswordNotMatchError
             | DomainError::AuthenticationFailed
             | DomainError::InvalidCredentials => {
                 tracing::warn!("Authentication error: {}", error);
-                ApiError::new(error.to_string(), ErrorCategory::Unauthorized)
+                ApiError::new(error.to_string(), ErrorKind::Unauthorized)
             }
             DomainError::SamePasswordError => {
                 tracing::warn!("Same password validation error: {}", error);
-                ApiError::new(error.to_string(), ErrorCategory::BadRequest)
+                ApiError::new(error.to_string(), ErrorKind::BadRequest)
             }
         }
     }
@@ -138,7 +138,7 @@ impl From<ValidationErrors> for ApiError {
         ApiError::with_details(
             "validation_error".to_string(),
             details,
-            ErrorCategory::BadRequest,
+            ErrorKind::BadRequest,
         )
     }
 }
@@ -148,7 +148,7 @@ impl From<anyhow::Error> for ApiError {
         tracing::error!("Unexpected error: {:?}", error);
         ApiError::new(
             "internal_error".to_string(),
-            ErrorCategory::InternalServerError,
+            ErrorKind::InternalServerError,
         )
     }
 }
