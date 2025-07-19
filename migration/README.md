@@ -1,4 +1,4 @@
-# Running Migrator CLI
+# Krap Migration Tool
 
 - Generate a new migration file
     ```sh

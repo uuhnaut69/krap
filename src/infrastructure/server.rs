@@ -89,7 +89,7 @@ fn setup_routes_and_openapi() -> (Router<Arc<AppState>>, OpenApi) {
         .routes(routes!(auth_handler::register))
         .routes(routes!(auth_handler::login))
         .routes(routes!(auth_handler::logout))
-        .routes(routes!(auth_handler::profile))
+        .routes(routes!(auth_handler::get_profile))
         .routes(routes!(auth_handler::change_password))
         .split_for_parts()
 }

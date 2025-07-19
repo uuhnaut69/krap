@@ -29,15 +29,19 @@ const AUTH_TAG: &str = "Auth";
 
 #[derive(Serialize, Debug, ToSchema)]
 pub struct AuthResponse {
+    #[schema(example = "550e8400-e29b-41d4-a716-446655440000")]
     pub id: String,
+    #[schema(example = "john.doe@example.com")]
     pub email: String,
 }
 
 #[derive(Deserialize, Debug, ToSchema, validator::Validate)]
 pub struct RegisterRequest {
     #[validate(email(message = "invalid_email_format"))]
+    #[schema(example = "john.doe@example.com")]
     pub email: String,
     #[validate(length(min = 8, message = "password_must_be_at_least_8_characters"))]
+    #[schema(example = "securePassword123!")]
     pub password: String,
 }
 
@@ -49,10 +53,11 @@ pub struct RegisterRequest {
     request_body = RegisterRequest,
     responses(
         (status = 201, description = "User registered successfully", body = AuthResponse),
-        (status = 400, description = "Validation error", body = ApiError),
-        (status = 409, description = "User already exists", body = ApiError),
+        (status = 400, description = "Validation error - check email format and password length", body = ApiError),
+        (status = 409, description = "User already exists with this email", body = ApiError),
         (status = 500, description = "Internal server error", body = ApiError)
-    )
+    ),
+    operation_id = "register"
 )]
 pub async fn register(
     State(app_state): State<Arc<AppState>>,
@@ -85,8 +90,10 @@ pub async fn register(
 #[derive(Deserialize, Debug, ToSchema, validator::Validate)]
 pub struct LoginRequest {
     #[validate(email(message = "invalid_email_format"))]
+    #[schema(example = "john.doe@example.com")]
     pub email: String,
     #[validate(length(min = 1, message = "password_required"))]
+    #[schema(example = "securePassword123!")]
     pub password: String,
 }
 
@@ -98,9 +105,11 @@ pub struct LoginRequest {
     request_body = LoginRequest,
     responses(
         (status = 200, description = "Login successfully", body = AuthResponse),
-        (status = 401, description = "Invalid credentials", body = ApiError),
+        (status = 400, description = "Validation error - check email format", body = ApiError),
+        (status = 401, description = "Invalid email or password", body = ApiError),
         (status = 500, description = "Internal server error", body = ApiError)
-    )
+    ),
+    operation_id = "login"
 )]
 pub async fn login(
     State(app_state): State<Arc<AppState>>,
@@ -138,7 +147,8 @@ pub async fn login(
     responses(
         (status = 200, description = "Logout successfully"),
         (status = 500, description = "Internal server error", body = ApiError)
-    )
+    ),
+    operation_id = "logout"
 )]
 pub async fn logout(session: Session) -> ApiResult<()> {
     session.flush().await.map_err(|_| {
@@ -158,11 +168,12 @@ pub async fn logout(session: Session) -> ApiResult<()> {
     description = "Retrieve the current authenticated user's profile information. Requires a valid user session.",
     responses(
         (status = 200, description = "User profile information", body = AuthResponse),
-        (status = 401, description = "Unauthorized", body = ApiError),
+        (status = 401, description = "Unauthorized - invalid or missing session", body = ApiError),
         (status = 500, description = "Internal server error", body = ApiError)
-    )
+    ),
+    operation_id = "get_profile"
 )]
-pub async fn profile(
+pub async fn get_profile(
     AuthenticatedUser(current_user): AuthenticatedUser,
 ) -> ApiResult<AuthResponse> {
     Ok(Json(AuthResponse {
@@ -174,8 +185,10 @@ pub async fn profile(
 #[derive(Deserialize, Debug, ToSchema, validator::Validate)]
 pub struct ChangePasswordRequest {
     #[validate(length(min = 1, message = "current_password_required"))]
+    #[schema(example = "currentPassword123!")]
     pub current_password: String,
     #[validate(length(min = 8, message = "new_password_must_be_at_least_8_characters"))]
+    #[schema(example = "newSecurePassword456!")]
     pub new_password: String,
 }
 
@@ -187,10 +200,11 @@ pub struct ChangePasswordRequest {
     request_body = ChangePasswordRequest,
     responses(
         (status = 200, description = "Password changed successfully", body = AuthResponse),
-        (status = 400, description = "Validation error or new password same as current", body = ApiError),
+        (status = 400, description = "Validation error - check password length requirements", body = ApiError),
         (status = 401, description = "Invalid current password or unauthorized", body = ApiError),
         (status = 500, description = "Internal server error", body = ApiError)
-    )
+    ),
+    operation_id = "change_password"
 )]
 pub async fn change_password(
     State(app_state): State<Arc<AppState>>,
