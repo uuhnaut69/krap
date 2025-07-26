@@ -11,7 +11,7 @@ members = [".", "migration"]
 anyhow = { version = "1.0.98" }
 async-trait = { version = "0.1.88" }
 axum = { version = "0.8.4" }
-tokio = { version = "1.45.1", features = ["full"] }
+tokio = { version = "1.45.1", features = ["rt-multi-thread"] }
 tower = { version = "0.5.2" }
 tower-http = { version = "0.6.6", features = ["cors", "compression-full", "decompression-full", "trace", "timeout"] }
 dotenvy = { version = "0.15.7" }
