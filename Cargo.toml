@@ -17,7 +17,7 @@ tower-http = { version = "0.6.6", features = ["cors", "compression-full", "decom
 dotenvy = { version = "0.15.7" }
 serde = { version = "1.0.219", features = ["derive"] }
 tracing = { version = "0.1.41" }
-tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
 thiserror = { version = "2.0.12" }
 utoipa = { version = "5.4.0", features = ["axum_extras"] }
 utoipa-axum = { version = "0.2.0" }
