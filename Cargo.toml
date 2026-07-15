@@ -30,4 +30,4 @@ validator = { version = "0.20.0", features = ["derive"] }
 bcrypt = { version = "0.17.0" }
 tower-sessions = { version = "0.14.0" }
 tower-sessions-redis-store = { version = "0.16.0" }
-time = { version = "0.3.41" }
+time = { version = "0.3.47" }
