@@ -27,7 +27,7 @@ sea-orm = { version = "2.0.0-rc.1", features = ["runtime-tokio-native-tls", "sql
 chrono = { version = "0.4.41", features = ["serde"] }
 uuid = { version = "1.17.0", features = ["v7"] }
 validator = { version = "0.20.0", features = ["derive"] }
-bcrypt = { version = "0.17.0" }
+bcrypt = { version = "0.19.0" }
 tower-sessions = { version = "0.14.0" }
 tower-sessions-redis-store = { version = "0.16.0" }
 time = { version = "0.3.41" }
